@@ -61,16 +61,16 @@ test:
 docker-build tag="printarr:latest":
     docker build -t {{tag}} .
 
-# Run with Docker Compose
+# Run with Docker Compose (force-recreate picks up .env changes)
 up:
-    docker compose up
+    docker compose up --force-recreate
 
 # Rebuild frontend and restart local dev server
 dev-rebuild: build-frontend dev
 
-# Run in background
+# Run in background (force-recreate picks up .env changes)
 up-detached:
-    docker compose up -d
+    docker compose up -d --force-recreate
 
 # Stop Docker Compose
 down:

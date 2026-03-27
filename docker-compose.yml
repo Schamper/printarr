@@ -1,14 +1,14 @@
 services:
   printarr:
     build: .
+    image: printarr:latest
     container_name: printarr
     environment:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-UTC}
-      - PORT=${PORT:-6969}
     volumes:
       - ./config:/config
     ports:
-      - "${PORT:-6969}:${PORT:-6969}"
+      - "6969:6969"
     restart: unless-stopped

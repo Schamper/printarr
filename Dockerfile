@@ -1,35 +1,18 @@
 # syntax=docker/dockerfile:1
 
 # ── Stage 1: Build frontend ──────────────────────────────
-FROM node:20-alpine AS frontend-build
+FROM node:22-alpine AS frontend-build
 WORKDIR /build
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm install --frozen-lockfile 2>/dev/null || npm install
 COPY frontend/ .
 RUN npm run build
 
-# ── Stage 2: Final image (s6-overlay + Python + built frontend) ──
-FROM python:3.12-alpine
-
-ARG S6_OVERLAY_VERSION=3.2.0.2
-ARG TARGETARCH
-
-# Install s6-overlay (map Docker arch names → s6 asset names)
-RUN case "${TARGETARCH}" in \
-      amd64) S6_ARCH=x86_64  ;; \
-      arm64) S6_ARCH=aarch64 ;; \
-      arm)   S6_ARCH=armhf   ;; \
-      *)     S6_ARCH="${TARGETARCH}" ;; \
-    esac && \
-    wget -q -O /tmp/s6-noarch.tar.xz \
-      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" && \
-    tar -C / -Jxpf /tmp/s6-noarch.tar.xz && rm /tmp/s6-noarch.tar.xz && \
-    wget -q -O /tmp/s6-arch.tar.xz \
-      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" && \
-    tar -C / -Jxpf /tmp/s6-arch.tar.xz && rm /tmp/s6-arch.tar.xz
+# ── Stage 2: Final image ─────────────────────────────────
+FROM python:3.13-alpine
 
 # System deps
-RUN apk add --no-cache shadow bash curl
+RUN apk add --no-cache shadow bash
 
 # Create abc user (linuxserver convention)
 RUN groupadd -g 1000 abc && \
@@ -49,52 +32,19 @@ COPY app ./app
 # Copy built frontend (Vite outputs to static/ at the project root)
 COPY --from=frontend-build /static ./static
 
-# ── s6 service definitions ───────────────────────────────
+# Entrypoint script: handle PUID/PGID then exec as abc
+RUN printf '#!/bin/bash\nset -e\n\nPUID="${PUID:-1000}"\nPGID="${PGID:-1000}"\n\nusermod -o -u "$PUID" abc 2>/dev/null\ngroupmod -o -g "$PGID" abc 2>/dev/null\nchown -R abc:abc /config\n\ncd /app\nexec su-exec abc python -m uvicorn app.main:app \\\n  --host 0.0.0.0 --port 6969 --log-level info\n' \
+    > /entrypoint.sh && chmod +x /entrypoint.sh
 
-# Init script: set PUID/PGID
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/init-perms/dependencies.d
-COPY <<'EOF' /etc/s6-overlay/s6-rc.d/init-perms/type
-oneshot
-EOF
-COPY <<'SCRIPT' /etc/s6-overlay/s6-rc.d/init-perms/up
-#!/command/execlineb -P
-foreground {
-  if { s6-test -n ${PUID} }
-  foreground { usermod -o -u ${PUID} abc }
-  foreground { groupmod -o -g ${PGID} abc }
-}
-foreground { chown -R abc:abc /config }
-SCRIPT
-RUN touch /etc/s6-overlay/s6-rc.d/init-perms/dependencies.d/base
-
-# Printarr service
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/printarr/dependencies.d
-COPY <<'EOF' /etc/s6-overlay/s6-rc.d/printarr/type
-longrun
-EOF
-COPY <<'SCRIPT' /etc/s6-overlay/s6-rc.d/printarr/run
-#!/command/execlineb -P
-s6-setuidgid abc
-cd /app
-/usr/local/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --log-level info
-SCRIPT
-RUN touch /etc/s6-overlay/s6-rc.d/printarr/dependencies.d/init-perms
-
-# Wire up to s6 bundle
-RUN mkdir -p /etc/s6-overlay/s6-rc.d/user/contents.d && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-perms && \
-    touch /etc/s6-overlay/s6-rc.d/user/contents.d/printarr
+RUN apk add --no-cache su-exec
 
 # Create directories
 RUN mkdir -p /config && chown -R abc:abc /config
 
-ENV PUID=1000
-ENV PGID=1000
-ENV TZ=America/New_York
 ENV DATA_DIR=/config
-ENV PORT=6969
+ENV TZ=UTC
 
 EXPOSE 6969
 VOLUME ["/config"]
 
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["/entrypoint.sh"]

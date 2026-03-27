@@ -1,10 +1,10 @@
 # 🖨️ printarr
 
-> *"sonarr but for plastic" — me, to myself, at 2am*
+> *"prowlarr but for plastic" — me, to myself, at 2am*
 
 my boy claude cooked this up. it's a self-hosted *arr-style app for hoarding 3D model files you'll never actually print. searches thingiverse, printables, makerworld, myminifactory, cults3d, and makeronline simultaneously, streams results live, lets you bookmark stuff into a library, tag it, queue it up with filament settings, fire them straight into your slicer. dopamine machine for 3D printer goblins.
 
-looks like sonarr/radarr. does not judge you for having 4000 saved models and a single ender 3.
+looks like *arr. does not judge you for having 4000 saved models and a single ender 3.
 
 > ⚠️ **keep this on your local network.** this thing was vibed into existence at 2am with zero threat modeling — no auth, no rate limiting, cors wide open like your mom's refrigerator. if you expose it to the internet you deserve what happens next.
 
@@ -50,9 +50,10 @@ services:
 |-----|---------|-------------|
 | `PUID` | `1000` | linux user id (chown stuff) |
 | `PGID` | `1000` | linux group id (chown stuff) |
-| `TZ` | `America/New_York` | timezone so timestamps aren't insane |
-| `PORT` | `6969` | port to yell at |
+| `TZ` | `UTC` | timezone so timestamps aren't insane |
 | `LOG_LEVEL` | `INFO` | set to DEBUG if you want chaos |
+
+want a different port to yell at? change the left side of `ports:` in your compose file. `8080:6969` = host 8080 → container 6969.
 
 ---
 
@@ -86,6 +87,8 @@ it's like collections but not cringe.
 hit **Files** on any library card, then **Queue** next to any file. it gets added to the queue tab as a specific file — not just "the model", the actual file you want to print. because remembering which STL out of 47 in a model pack you wanted is not a skill you have.
 
 the queue lets you set filament type, color, copies, and notes per item. all inline-editable. drag to reorder. **Slice ▾** fires it straight into your slicer. download button if you want the file locally. trash it when done. that's the whole workflow.
+
+unlike the windows print spooler, items here can actually be removed. wild concept. no need to restart the spooler service, open task manager, kill `spoolsv.exe`, reboot, pray, reboot again, give up and walk to the printer to cancel it physically.
 
 ---
 
