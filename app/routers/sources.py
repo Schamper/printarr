@@ -58,7 +58,4 @@ async def proxy_image(url: str = Query(...)):
 @router.get("")
 async def list_sources():
     """Return all registered source metadata."""
-    return [
-        {"name": cls.name, "display_name": cls.display_name, "base_url": cls.base_url}
-        for cls in get_all_sources().values()
-    ]
+    return [{"name": cls.name, "display_name": cls.display_name, "base_url": cls.base_url} for cls in get_all_sources().values()]

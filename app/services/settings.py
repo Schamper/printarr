@@ -29,22 +29,22 @@ async def list_indexers(db: AsyncSession) -> list[dict]:
     enriched = []
     for cfg in configs:
         cls = source_classes.get(cfg.name)
-        enriched.append({
-            "id": cfg.id,
-            "name": cfg.name,
-            "display_name": cls.display_name if cls else cfg.name.capitalize(),
-            "enabled": cfg.enabled,
-            "has_api_key": bool(cfg.api_key),
-            "priority": cfg.priority,
-            "requires_api_key": cls.requires_api_key if cls else False,
-            "api_key_label": cls.api_key_label if cls else "API Key",
-        })
+        enriched.append(
+            {
+                "id": cfg.id,
+                "name": cfg.name,
+                "display_name": cls.display_name if cls else cfg.name.capitalize(),
+                "enabled": cfg.enabled,
+                "has_api_key": bool(cfg.api_key),
+                "priority": cfg.priority,
+                "requires_api_key": cls.requires_api_key if cls else False,
+                "api_key_label": cls.api_key_label if cls else "API Key",
+            }
+        )
     return enriched
 
 
-async def update_indexer(
-    db: AsyncSession, name: str, data: IndexerConfigUpdate
-) -> dict | None:
+async def update_indexer(db: AsyncSession, name: str, data: IndexerConfigUpdate) -> dict | None:
     source_classes = get_all_sources()
     result = await db.execute(select(IndexerConfig).where(IndexerConfig.name == name))
     cfg = result.scalar_one_or_none()

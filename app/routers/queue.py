@@ -48,9 +48,7 @@ async def add_to_queue(data: QueueItemCreate, db: AsyncSession = Depends(get_db)
 
 
 @router.patch("/{item_id}", response_model=QueueItemRead)
-async def update_queue_item(
-    item_id: int, data: QueueItemUpdate, db: AsyncSession = Depends(get_db)
-):
+async def update_queue_item(item_id: int, data: QueueItemUpdate, db: AsyncSession = Depends(get_db)):
     item = await queue_service.update_item(db, item_id, data)
     if not item:
         raise HTTPException(status_code=404, detail="Queue item not found")
@@ -65,7 +63,5 @@ async def remove_from_queue(item_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.put("/reorder", status_code=204)
-async def reorder_queue(
-    items: list[ReorderItem], db: AsyncSession = Depends(get_db)
-):
+async def reorder_queue(items: list[ReorderItem], db: AsyncSession = Depends(get_db)):
     await queue_service.reorder_items(db, items)

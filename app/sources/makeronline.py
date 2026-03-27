@@ -40,7 +40,10 @@ class MakerOnlineSource(SourceBase):
     }
 
     _SEARCH_HEADERS = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "User-Agent": (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        ),
         "Accept": "application/json",
         "Content-Type": "application/json",
         "Origin": "https://makeronline.com",
@@ -50,7 +53,6 @@ class MakerOnlineSource(SourceBase):
     async def search(self, query: str, page: int = 1, sort: SortOption = "relevance") -> AsyncIterator[SearchResult]:
         client = await self._get_client()
         per_page = 20
-        offset = (page - 1) * per_page
 
         try:
             resp = await client.post(
@@ -76,7 +78,9 @@ class MakerOnlineSource(SourceBase):
         if data.get("code") != 0:
             logger.warning(
                 "MakerOnline API error for %r: code=%s message=%s",
-                query, data.get("code"), data.get("message"),
+                query,
+                data.get("code"),
+                data.get("message"),
             )
             return
 

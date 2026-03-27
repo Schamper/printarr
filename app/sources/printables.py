@@ -183,12 +183,8 @@ class PrintablesSource(SourceBase):
         if not all_files:
             return []
 
-        id_to_name: dict[str, str] = {
-            f["id"]: f["name"] for f in all_files if f.get("id") and f.get("name")
-        }
-        id_to_size: dict[str, int] = {
-            f["id"]: int(f.get("fileSize") or 0) for f in all_files if f.get("id")
-        }
+        id_to_name: dict[str, str] = {f["id"]: f["name"] for f in all_files if f.get("id") and f.get("name")}
+        id_to_size: dict[str, int] = {f["id"]: int(f.get("fileSize") or 0) for f in all_files if f.get("id")}
 
         # Step 2: Get download URLs via mutation ---------------------------------
         files_arg = []
@@ -211,11 +207,14 @@ class PrintablesSource(SourceBase):
         try:
             resp = await client.post(
                 self._graphql_url,
-                json={"query": gql_dl, "variables": {
-                    "printId": source_id,
-                    "source": "model_detail",
-                    "files": files_arg,
-                }},
+                json={
+                    "query": gql_dl,
+                    "variables": {
+                        "printId": source_id,
+                        "source": "model_detail",
+                        "files": files_arg,
+                    },
+                },
                 headers=self._GQL_HEADERS,
                 timeout=20.0,
             )

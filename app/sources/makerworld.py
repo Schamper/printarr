@@ -148,9 +148,11 @@ class MakerWorldSource(SourceBase):
             filename = f.get("modelName", "")
             url = f.get("modelUrl") or model_page_url
             if filename:
-                results.append(DiscoveredFile(
-                    filename=filename,
-                    url=url,
-                    size_bytes=int(f.get("modelSize") or 0),
-                ))
+                results.append(
+                    DiscoveredFile(
+                        filename=filename,
+                        url=url,
+                        size_bytes=int(f.get("modelSize") or 0),
+                    )
+                )
         return results

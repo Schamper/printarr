@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 # -- Search result (normalized across all sources) --
 
+
 class SearchResult(BaseModel):
     source: str
     source_id: str
@@ -23,12 +24,14 @@ class SearchResult(BaseModel):
 
 class SearchEvent(BaseModel):
     """One SSE event during a search stream."""
+
     event: str  # "result", "source_start", "source_done", "source_error", "done"
     source: str = ""
     data: SearchResult | str | None = None
 
 
 # -- Library --
+
 
 class LibraryModelCreate(BaseModel):
     source: str
@@ -74,6 +77,7 @@ class TagsUpdate(BaseModel):
 
 # -- Files --
 
+
 class ModelFileCreate(BaseModel):
     filename: str
     original_url: str
@@ -94,6 +98,7 @@ class ModelFileRead(BaseModel):
 
 
 # -- Queue --
+
 
 class QueueItemCreate(BaseModel):
     file_id: int
@@ -141,6 +146,7 @@ class QueueItemRead(BaseModel):
 
 
 # -- Settings --
+
 
 class IndexerConfigRead(BaseModel):
     id: int

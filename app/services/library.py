@@ -23,9 +23,7 @@ async def list_models(
         stmt = stmt.where(LibraryModel.name.ilike(f"%{search}%"))
     if tag:
         stmt = stmt.where(
-            sa.text(
-                "EXISTS (SELECT 1 FROM json_each(library_models.tags) WHERE value = :tag_val)"
-            ).bindparams(tag_val=tag)
+            sa.text("EXISTS (SELECT 1 FROM json_each(library_models.tags) WHERE value = :tag_val)").bindparams(tag_val=tag)
         )
     result = await db.execute(stmt)
     return list(result.scalars().all())
@@ -63,9 +61,7 @@ async def delete_model(db: AsyncSession, model_id: int) -> bool:
 
 
 async def is_in_library(db: AsyncSession, source: str, source_id: str) -> bool:
-    stmt = select(LibraryModel.id).where(
-        LibraryModel.source == source, LibraryModel.source_id == source_id
-    )
+    stmt = select(LibraryModel.id).where(LibraryModel.source == source, LibraryModel.source_id == source_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none() is not None
 
@@ -73,9 +69,6 @@ async def is_in_library(db: AsyncSession, source: str, source_id: str) -> bool:
 async def get_all_tags(db: AsyncSession) -> list[str]:
     """Return all unique tags used across the library, sorted."""
     result = await db.execute(
-        sa.text(
-            "SELECT DISTINCT value FROM library_models, json_each(library_models.tags)"
-            " WHERE value != '' ORDER BY value"
-        )
+        sa.text("SELECT DISTINCT value FROM library_models, json_each(library_models.tags) WHERE value != '' ORDER BY value")
     )
     return [row[0] for row in result.fetchall()]

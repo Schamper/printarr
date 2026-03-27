@@ -45,9 +45,7 @@ async def add_item(db: AsyncSession, data: QueueItemCreate) -> QueueItem:
     return item
 
 
-async def update_item(
-    db: AsyncSession, item_id: int, data: QueueItemUpdate
-) -> QueueItem | None:
+async def update_item(db: AsyncSession, item_id: int, data: QueueItemUpdate) -> QueueItem | None:
     item = await db.get(QueueItem, item_id)
     if not item:
         return None

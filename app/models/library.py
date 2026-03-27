@@ -31,12 +31,8 @@ class LibraryModel(Base):
     tags: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
 
     # Timestamps
-    added_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-    updated_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
+    added_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     queue_items: Mapped[list[QueueItem]] = relationship(back_populates="model", cascade="all, delete-orphan")
     files: Mapped[list[ModelFile]] = relationship(back_populates="model", cascade="all, delete-orphan")
@@ -55,9 +51,7 @@ class QueueItem(Base):
     copies: Mapped[int] = mapped_column(Integer, default=1)
     sort_order: Mapped[int] = mapped_column(Integer, default=0, index=True)
 
-    added_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    added_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     model: Mapped[LibraryModel] = relationship(back_populates="queue_items")
     file: Mapped[ModelFile | None] = relationship(back_populates="queue_items")
@@ -76,9 +70,7 @@ class ModelFile(Base):
     status: Mapped[str] = mapped_column(String(20), default="available", server_default="available")
     local_path: Mapped[str | None] = mapped_column(String(2048), nullable=True)
 
-    added_at: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    added_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     queue_items: Mapped[list[QueueItem]] = relationship(back_populates="file")
 

@@ -22,11 +22,7 @@ def _detect_type(filename: str) -> str:
 
 
 async def list_files(db: AsyncSession, library_model_id: int) -> list[ModelFile]:
-    stmt = (
-        select(ModelFile)
-        .where(ModelFile.library_model_id == library_model_id)
-        .order_by(ModelFile.filename)
-    )
+    stmt = select(ModelFile).where(ModelFile.library_model_id == library_model_id).order_by(ModelFile.filename)
     result = await db.execute(stmt)
     return list(result.scalars().all())
 
@@ -54,9 +50,7 @@ async def delete_file(db: AsyncSession, file_id: int) -> bool:
     return True
 
 
-async def _store_discovered(
-    db: AsyncSession, library_model_id: int, discovered: list
-) -> list[ModelFile]:
+async def _store_discovered(db: AsyncSession, library_model_id: int, discovered: list) -> list[ModelFile]:
     """Persist discovered files, skipping duplicates by URL."""
     existing = await list_files(db, library_model_id)
     existing_urls = {f.original_url for f in existing}

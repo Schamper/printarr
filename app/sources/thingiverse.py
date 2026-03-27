@@ -103,7 +103,7 @@ class ThingiverseSource(SourceBase):
             return []
 
         results: list[DiscoveredFile] = []
-        for f in (resp.json() if isinstance(resp.json(), list) else []):
+        for f in resp.json() if isinstance(resp.json(), list) else []:
             name = f.get("name", "")
             url = f.get("download_url", "")
             if name and url:

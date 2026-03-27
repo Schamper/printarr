@@ -17,15 +17,14 @@ router = APIRouter(prefix="/api/settings", tags=["settings"])
 
 # -- Indexers --
 
+
 @router.get("/indexers", response_model=list[IndexerConfigRead])
 async def list_indexers(db: AsyncSession = Depends(get_db)):
     return await settings_service.list_indexers(db)
 
 
 @router.patch("/indexers/{name}", response_model=IndexerConfigRead)
-async def update_indexer(
-    name: str, data: IndexerConfigUpdate, db: AsyncSession = Depends(get_db)
-):
+async def update_indexer(name: str, data: IndexerConfigUpdate, db: AsyncSession = Depends(get_db)):
     cfg = await settings_service.update_indexer(db, name, data)
     if not cfg:
         raise HTTPException(status_code=404, detail="Indexer not found")
@@ -33,6 +32,7 @@ async def update_indexer(
 
 
 # -- General settings --
+
 
 @router.get("", response_model=list[AppSettingRead])
 async def list_settings(db: AsyncSession = Depends(get_db)):

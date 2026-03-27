@@ -71,9 +71,7 @@ async def stream_search(
         sources = [s for s in sources if s.name in sources_filter]
 
     # Get library model IDs for "in_library" flag
-    lib_result = await db.execute(
-        select(LibraryModel.source, LibraryModel.source_id)
-    )
+    lib_result = await db.execute(select(LibraryModel.source, LibraryModel.source_id))
     library_ids = {f"{row[0]}:{row[1]}" for row in lib_result.all()}
 
     # Emit source_start for ALL sources upfront so the UI shows them immediately
@@ -81,23 +79,20 @@ async def stream_search(
         configured = not source.requires_api_key or bool(source.api_key)
         yield {
             "event": "source_start",
-            "data": json.dumps({
-                "source": source.name,
-                "display_name": source.display_name,
-                "configured": configured,
-            }),
+            "data": json.dumps(
+                {
+                    "source": source.name,
+                    "display_name": source.display_name,
+                    "configured": configured,
+                }
+            ),
         }
 
     # Only actually search sources that are configured
     runnable = [s for s in sources if not s.requires_api_key or bool(s.api_key)]
 
     # Run all runnable sources concurrently, yield events as each completes
-    tasks = {
-        asyncio.create_task(
-            _search_single_source(s, query, page, library_ids, sort)
-        ): s.name
-        for s in runnable
-    }
+    tasks = {asyncio.create_task(_search_single_source(s, query, page, library_ids, sort)): s.name for s in runnable}
 
     for coro in asyncio.as_completed(tasks):
         events = await coro

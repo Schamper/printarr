@@ -20,6 +20,7 @@ SortOption = str  # "relevance" | "downloads" | "likes" | "newest"
 @dataclass
 class DiscoveredFile:
     """A file URL discovered from a source's model page."""
+
     filename: str
     url: str
     file_type: str = field(default="")
