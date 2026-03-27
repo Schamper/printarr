@@ -21,7 +21,7 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --group dev
 
       - name: Lint
         run: just lint
@@ -40,7 +40,7 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --group dev
 
       - name: Test
         run: just test
