@@ -1,0 +1,44 @@
+[project]
+name = "printarr"
+version = "0.1.0"
+description = "Self-hosted *arr-style 3D model aggregator"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.30,<1",
+    "sqlalchemy[asyncio]>=2.0,<3",
+    "aiosqlite>=0.20,<1",
+    "pydantic>=2.0,<3",
+    "pydantic-settings>=2.0,<3",
+    "httpx>=0.27,<1",
+    "beautifulsoup4>=4.12,<5",
+    "sse-starlette>=2.0,<3",
+    "python-multipart>=0.0.9",
+    "alembic>=1.13,<2",
+    "curl-cffi>=0.14.0",
+]
+
+[project.scripts]
+printarr = "app.main:run"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 130
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM"]
+ignore = ["B008"]  # FastAPI Depends() in argument defaults is idiomatic
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "aiosqlite>=0.20,<1",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
