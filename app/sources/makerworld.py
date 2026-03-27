@@ -87,6 +87,27 @@ class MakerWorldSource(SourceBase):
                 like_count=item.get("likeCount", 0) or 0,
             )
 
+    @staticmethod
+    def _extract_thumbnail(design: dict) -> str:
+        """Extract a thumbnail URL from a model-page design object.
+
+        Model pages use `coverUrl` (flat string). Search results use `cover`.
+        Fall through several candidates for resilience.
+        """
+        for key in ("coverUrl", "cover", "coverLandscape", "coverImage", "thumbnail"):
+            raw = design.get(key)
+            if isinstance(raw, str) and raw:
+                return raw
+            if isinstance(raw, dict):
+                url = raw.get("url") or raw.get("filePath") or ""
+                if url:
+                    return url
+        # Fall back to first image in the images list
+        images = design.get("images") or design.get("designImages") or []
+        if images and isinstance(images[0], dict):
+            return images[0].get("url") or images[0].get("filePath") or ""
+        return ""
+
     async def fetch_model_metadata(self, url: str, source_id: str) -> SearchResult:
         session = await self._get_session()
         resp = await session.get(url)
@@ -107,7 +128,7 @@ class MakerWorldSource(SourceBase):
             name=design.get("title", design.get("name", "")),
             url=f"{self.base_url}/en/models/{source_id}{'-' + slug if slug else ''}",
             author=creator.get("name", "") if isinstance(creator, dict) else "",
-            thumbnail_url=design.get("cover", design.get("thumbnail", "")),
+            thumbnail_url=self._extract_thumbnail(design),
             description=(design.get("description", "") or "")[:500],
             download_count=design.get("downloadCount", 0) or 0,
             like_count=design.get("likeCount", 0) or 0,
