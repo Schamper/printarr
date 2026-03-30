@@ -17,7 +17,6 @@ class Settings(BaseSettings):
 
     # Source API keys
     thingiverse_api_token: str = ""
-    myminifactory_api_key: str = ""
 
     @property
     def database_url(self) -> str:

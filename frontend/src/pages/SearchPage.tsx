@@ -138,7 +138,7 @@ export default function SearchPage() {
           <div className="empty-state">
             <SearchIcon size={48} />
             <h3>Search for 3D models</h3>
-            <p>Results from Thingiverse, Printables, MakerWorld, MyMiniFactory, Cults3D, and MakerOnline will appear here.</p>
+            <p>Results from Thingiverse, Printables, MakerWorld, Cults3D, and MakerOnline will appear here.</p>
           </div>
         )
       )}

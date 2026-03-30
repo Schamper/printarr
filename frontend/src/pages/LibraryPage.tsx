@@ -48,7 +48,7 @@ function ImportURLModal({ onClose }: { onClose: () => void }) {
           <button className="btn-icon" onClick={onClose}><X size={18} /></button>
         </div>
         <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 16 }}>
-          Paste a model URL from Printables, MakerWorld, Thingiverse, Cults3D, or MyMiniFactory.
+          Paste a model URL from Printables, MakerWorld, Thingiverse, or Cults3D.
         </p>
         <form onSubmit={handleSubmit}>
           <div className="form-group">

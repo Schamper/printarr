@@ -126,7 +126,6 @@ def _load_sources() -> None:
     import app.sources.cults3d  # noqa: F401
     import app.sources.makeronline  # noqa: F401
     import app.sources.makerworld  # noqa: F401
-    import app.sources.myminifactory  # noqa: F401
     import app.sources.printables  # noqa: F401
     import app.sources.thingiverse  # noqa: F401
 

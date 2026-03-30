@@ -2,7 +2,7 @@
 
 > *"prowlarr but for plastic" — me, to myself, at 2am*
 
-my boy claude cooked this up. it's a self-hosted *arr-style app for hoarding 3D model files you'll never actually print. searches thingiverse, printables, makerworld, myminifactory, cults3d, and makeronline simultaneously, streams results live, lets you bookmark stuff into a library, tag it, queue it up with filament settings, fire them straight into your slicer. dopamine machine for 3D printer goblins.
+my boy claude cooked this up. it's a self-hosted *arr-style app for hoarding 3D model files you'll never actually print. searches thingiverse, printables, makerworld, cults3d, and makeronline simultaneously, streams results live, lets you bookmark stuff into a library, tag it, queue it up with filament settings, fire them straight into your slicer. dopamine machine for 3D printer goblins.
 
 looks like *arr. does not judge you for having 4000 saved models and a single ender 3.
 
@@ -63,8 +63,6 @@ some sources are gatekeeping little gremlins. configure in **Settings → Indexe
 
 **Thingiverse** — demands an App Token or it throws a 401 at you and walks away.\
 no token = no thingiverse. that's the deal. go to https://www.thingiverse.com/apps/create, make an app, copy the **App Token** value, paste it in settings. takes like 2 minutes. worth it for the drm-free printer farm.
-
-**MyMiniFactory** — also wants a key. https://www.myminifactory.com/settings/developer. generate one. it's free. paste it. done.
 
 **the rest** (Printables, MakerWorld, Cults3D, MakerOnline) — no keys needed, they're normal websites that haven't read the enshittification playbook yet. (makerworld uses a chrome impersonation hack because cloudflare said no and we said lol ok)
 

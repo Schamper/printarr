@@ -18,8 +18,6 @@ _PROXY_ALLOWED_HOSTS = {
     "cdn-acop.makeronline.com",
     "files.printables.com",
     "media.printables.com",
-    "cdn.myminifactory.com",
-    "images.myminifactory.com",
     "cdn.thangs.com",
     "images.cults3d.com",
     "videos.cults3d.com",
